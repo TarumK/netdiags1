@@ -3,7 +3,7 @@ from django.http import JsonResponse, HttpResponse
 from .models import Sector, Server, Log
 from .forms import MyForm
 from ping3 import ping, verbose_ping
-# Create your views here.
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 
 
 def index(request):
@@ -43,12 +43,21 @@ def index(request):
         average1 = 0
         current_host = []
         form = MyForm()
+
         allrec = Log.objects.all()
-        return render(request, 'index.html', {'allrec': allrec, 'form': form})
+        paginator = Paginator(allrec, 10)
+        page_number = request.GET.get('page')
+        items = paginator.get_page(page_number)
+
+
+        return render(request, 'index.html', {'allrec': allrec, 'form': form, 'items': items})
 # Выбираем все записи логов, пользуяст ORM-кой, а не чистым SQL. Типа, это SELECT * FROM Log
     allrec = Log.objects.all()
+    paginator = Paginator(allrec, 5)
+    page_number = request.GET.get('page')
+    items = paginator.get_page(page_number)
 # Отрисовываем шаблон с данными, полученными с функциональных представлений вьюхи
-    return render(request, 'index.html', {'allrec': allrec,'form': form,
+    return render(request, 'index.html', {'allrec': allrec,'form': form, 'items': items,
                                           'ping_count1': ping_count1, 'average1': average1, 'host': current_host})
 
 
@@ -84,3 +93,9 @@ def hostping(host, packet_count):
             lost_count += 1
     sr = average/ping_count
     return [ping_count, sr]
+
+def about(request):
+    return render(request, 'about.html')
+
+def feedback(request):
+    return render(request, 'feedback.html')

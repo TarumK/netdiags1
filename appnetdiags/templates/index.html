@@ -1,34 +1,10 @@
-<!DOCTYPE html>
-{% load static %}
-<html lang="en">
- <style>
-   ul.hr {
-    margin: 0; /* Обнуляем значение отступов */
-    padding: 4px; /* Значение полей */
-   }
-   ul.hr li {
-    display: inline; /* Отображать как строчный элемент */
-    margin-right: 5px; /* Отступ слева */
-<!--    border: 1px solid #000; /* Рамка вокруг текста */-->
-    padding: 3px; /* Поля вокруг текста */
-   }
-  </style>
-<head>
-    <meta charset="UTF-8">
-    <title>Aнализ и диагностика локальной сети</title>
-<!--    <link href="{% static 'css/styles5.css' %}" rel = "stylesheet">-->
-    <link rel="stylesheet" href="/static/admin/css/base.css">
-</head>
-<body>
-<h3>NetDiags: диагностика локальной сети</h3>
-<div align="right">
-<ul class="hr">
-    <li><a href="/admin/">[О сервисе]</a></li>
-    <li><a href="/admin/">[Обратная связь]</a></li>
-    <li><a href="/admin/">[Вход в админку] </a></li>
-</ul>
-</div>
-<hr>
+{% extends 'base.html' %}
+
+{% block title %}
+<title> Анализ и диагностика сети</title>
+{% endblock title %}
+
+{% block content %}
 <form action="/" method="POST">
     {% csrf_token %}
     {{ form }}
@@ -64,16 +40,35 @@
 <hr>
 <table>
     <tr align="center">
-        <td><b>Дата</b> </td><td><b>Хост</td> </td><td><b>Оправлено пакетов</b></td> <td><b>Среднее время отклика</b></td>
+        <td><b>Дата</b> </td><td><b>Хост</b></td><td><b>Оправлено пакетов</b></td> <td><b>Среднее время отклика</b></td>
     </tr>
-{% for rec in allrec %}
+{% for rec in items %}
     <tr>
         <td>{{ rec.log_date }} </td><td>{{ rec.log_host }}</td> </td><td>{{ rec.log_ping_count }}</td> <td>{{ rec.log_average }}</td>
     </tr>
 {% endfor %}
 </table>
+<!-- Блок пагинации//-->
+    <div class="pagination" align="center">
+      <span class="step-links">
+        {% if items.has_previous %}
+          <a href="?page=1">Первая стр.</a>
+          <a href="?page={{ items.previous_page_number }}"><<</a>
+        {% endif %}
 
-<br>
+        <span class="current-page">
+          {{ items.number }}
+        </span>
+
+        {% if items.has_next %}
+          <a href="?page={{ items.next_page_number }}">>></a>
+          <a href="?page={{ items.paginator.num_pages }}">Последняя стр.</a>
+        {% endif %}
+      </span>
+    </div>
+<!-- Конец блока пагинации//-->
+
+<!-- Начало блока вызова javascripta' отслеживающего остояние dom-объекта select//-->
 <script>
     document.getElementById("id_sector_name").addEventListener("change", function() {
         var sector_id = this.value;
@@ -91,24 +86,8 @@
             });
     });
 </script>
-<!--
-<script>
-    document.getElementById("id_sector_name").addEventListener("change", function() {
-        var sector_id = this.value;
-        var serverSelect = document.getElementById("id_server_name");
-        serverSelect.innerHTML = "";
-        fetch("/start/" + sector_id + "/")
-            .then(response => response.json())
-            .then(data => {
-                data.forEach(function(server) {
-                    var option = document.createElement("option");
-                    option.value = server.id;
-                    option.text = server.name;
-                    serverSelect.add(option);
-                });
-            });
-    });
-</script>
-//-->
-</body>
-</html>
+
+{% endblock content%}
+
+<!--{% block footer %}-->
+<!--{% endblock footer%}-->
