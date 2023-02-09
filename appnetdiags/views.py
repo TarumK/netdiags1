@@ -45,7 +45,7 @@ def index(request):
         form = MyForm()
 
         allrec = Log.objects.all()
-        paginator = Paginator(allrec, 10)
+        paginator = Paginator(allrec, 12)
         page_number = request.GET.get('page')
         items = paginator.get_page(page_number)
 
@@ -53,12 +53,13 @@ def index(request):
         return render(request, 'index.html', {'allrec': allrec, 'form': form, 'items': items})
 # Выбираем все записи логов, пользуяст ORM-кой, а не чистым SQL. Типа, это SELECT * FROM Log
     allrec = Log.objects.all()
-    paginator = Paginator(allrec, 5)
+    paginator = Paginator(allrec, 12)
     page_number = request.GET.get('page')
     items = paginator.get_page(page_number)
 # Отрисовываем шаблон с данными, полученными с функциональных представлений вьюхи
     return render(request, 'index.html', {'allrec': allrec,'form': form, 'items': items,
-                                          'ping_count1': ping_count1, 'average1': average1, 'host': current_host})
+                                          'ping_count1': ping_count1, 'average1': average1,
+                                          'host': current_host})
 
 
 def start(request, sector_id):

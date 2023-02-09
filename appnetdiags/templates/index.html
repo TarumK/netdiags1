@@ -5,6 +5,7 @@
 {% endblock title %}
 
 {% block content %}
+
 <form action="/" method="POST">
     {% csrf_token %}
     {{ form }}
@@ -37,7 +38,9 @@
 <!--           onclick="document.write('нажата кнопка проверки');">-->
 
 </form>
+
 <hr>
+<center>
 <table>
     <tr align="center">
         <td><b>Дата</b> </td><td><b>Хост</b></td><td><b>Оправлено пакетов</b></td> <td><b>Среднее время отклика</b></td>
@@ -66,8 +69,9 @@
         {% endif %}
       </span>
     </div>
+</center>
 <!-- Конец блока пагинации//-->
-
+{{ data1 }}
 <!-- Начало блока вызова javascripta' отслеживающего остояние dom-объекта select//-->
 <script>
     document.getElementById("id_sector_name").addEventListener("change", function() {
@@ -86,6 +90,12 @@
             });
     });
 </script>
+
+    <script>
+        var data = JSON.parse('{{ data1 }}');
+            alert(data1);
+    }
+        </script>
 
 {% endblock content%}
 
