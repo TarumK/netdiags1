@@ -4,9 +4,13 @@ from .models import Sector, Server, Log
 from .forms import MyForm
 from ping3 import ping, verbose_ping
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+import appnetdiags.signals
+import time
+
 
 
 def index(request):
+    message=""
     # host_list = []
     if request.method == "POST":
 # Если нажата кнопка "Отправить", то из POST-потока формы получаем количество отправляемых пакетов
@@ -31,6 +35,7 @@ def index(request):
             log.log_ping_count = ping_count1
             log.log_average = average1
             log.save()
+            # message = "Запрос завершен"
 # Создаем экземпляр формы, связанной с моделю Log для передачи его в шаблон index.html
 # в качестве параметра функции прорисовки render()
 #         form = MyForm(request.POST)
@@ -56,10 +61,11 @@ def index(request):
     paginator = Paginator(allrec, 12)
     page_number = request.GET.get('page')
     items = paginator.get_page(page_number)
+
 # Отрисовываем шаблон с данными, полученными с функциональных представлений вьюхи
     return render(request, 'index.html', {'allrec': allrec,'form': form, 'items': items,
                                           'ping_count1': ping_count1, 'average1': average1,
-                                          'host': current_host})
+                                          'host': current_host, "message": message})
 
 
 def start(request, sector_id):
@@ -88,6 +94,7 @@ def hostping(host, packet_count):
     size_package = 128       #Размер отправляемых пакетов в байтах
     for count in range(1, ping_count + 1):
         time_response = ping(host, size=size_package, unit='s')
+        # time.sleep(0.1)
         if time_response is not False:
             average = average + time_response
         else:

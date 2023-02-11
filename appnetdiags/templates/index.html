@@ -34,7 +34,7 @@
 
     </select>
 
-    <input type="submit" name="Button" value="Начать проверку">
+    <input type="submit" id="submit" name="Button" value="Начать проверку">
 <!--           onclick="document.write('нажата кнопка проверки');">-->
 
 </form>
@@ -70,8 +70,9 @@
       </span>
     </div>
 </center>
+<p>
 <!-- Конец блока пагинации//-->
-{{ data1 }}
+
 <!-- Начало блока вызова javascripta' отслеживающего остояние dom-объекта select//-->
 <script>
     document.getElementById("id_sector_name").addEventListener("change", function() {
@@ -91,11 +92,35 @@
     });
 </script>
 
-    <script>
-        var data = JSON.parse('{{ data1 }}');
-            alert(data1);
-    }
-        </script>
+<!-- Начало блока вызова javascripta' выводящего для юзера в браузер popup-окна во время процесса тестирования//-->
+<script>
+<!--    document.querySelector("#submit").onclick = function()-->
+<!--    {-->
+<!--    alert("Начало пинга");-->
+<!--    }-->
+
+function showMessage(message) {
+  var popup = document.createElement("div");
+  popup.innerHTML = message;
+  popup.style.backgroundColor = "rgba(0,100,250,0.7)";
+  popup.style.color = "white";
+  popup.style.padding = "20px";
+  popup.style.position = "fixed";
+  popup.style.top = "50%";
+  popup.style.left = "50%";
+  popup.style.transform = "translate(-50%, -50%)";
+  popup.style.zIndex = "9999";
+  document.body.appendChild(popup);
+<!--  setTimeout(function() {-->
+<!--    popup.remove();-->
+<!--  }, 3000);-->
+}
+
+var button = document.getElementById("submit");
+button.addEventListener("click", function() {
+  showMessage("Идет опрос выбранных хостов. Немного терпения...");
+});
+</script>
 
 {% endblock content%}
 
