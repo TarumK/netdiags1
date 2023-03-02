@@ -16,6 +16,7 @@ def index(request):
 # Если нажата кнопка "Отправить", то из POST-потока формы получаем количество отправляемых пакетов
 # и размер пакета
         packet_count = int(request.POST.get('packet_count'))
+        packet_size = int(request.POST.get('packet_size'))
         # server_name = request.POST.get('server_name')
         # # host_list = t_s
 # Поочередно, в цикле выбираем хосты из глобального списка серверов t_s,
@@ -23,7 +24,7 @@ def index(request):
 # в качестве аргумента функции hostping()
         for host in t_s:
             print(host)
-            list_vozrata = hostping(host, packet_count)
+            list_vozrata = hostping(host, packet_count, packet_size)
 # Возвращаем из функции hostping количество вернувшихся пакетов, среднее время отклика и т.д.
             ping_count1 = list_vozrata[0]
             average1 = list_vozrata[1]
@@ -33,6 +34,7 @@ def index(request):
             log = Log()
             log.log_host = host
             log.log_ping_count = ping_count1
+            log.log_ping_size = packet_size
             log.log_average = average1
             log.save()
             # message = "Запрос завершен"
@@ -56,27 +58,22 @@ def index(request):
 
 
         return render(request, 'index.html', {'allrec': allrec, 'form': form, 'items': items})
-# Выбираем все записи логов, пользуяст ORM-кой, а не чистым SQL. Типа, это SELECT * FROM Log
+# Выбираем все записи логов, пользуясь ORM-кой, а не чистым SQL. Типа, это SELECT * FROM Log
     allrec = Log.objects.all()
     paginator = Paginator(allrec, 12)
     page_number = request.GET.get('page')
     items = paginator.get_page(page_number)
+    context = {'allrec': allrec, 'form': form, 'items': items, 'ping_count1': ping_count1,
+               'packet_size': packet_size, 'average1': average1,
+                'host': current_host, "message": message}
 
 # Отрисовываем шаблон с данными, полученными с функциональных представлений вьюхи
-    return render(request, 'index.html', {'allrec': allrec,'form': form, 'items': items,
-                                          'ping_count1': ping_count1, 'average1': average1,
-                                          'host': current_host, "message": message})
+    return render(request, 'index.html', context=context )
 
 
-def start(request, sector_id):
+def get_server_list(request, sector_id):
     global t_s
     servers = Server.objects.filter(sector=sector_id)
-    # clean_list = []
-    # for s in servers:
-    #     clean_list.append(s)
-    #     s = "".join(str(clean_list).split('<Server: '))
-    #     true_list = "".join(str(s).split('>'))
-    # print(type(true_list))
     server_list = []
     t_s = []
     for server in servers:
@@ -86,21 +83,22 @@ def start(request, sector_id):
     print(type(t_s))
     return JsonResponse(server_list, safe=False)
 
-def hostping(host, packet_count):
+def hostping(host, packet_count, packet_size):
     average = 0
     time_response = 0
     ping_count = packet_count         #Количество отправляемых пакетов
+
     lost_count = 0          #Количество потерянных пакетов
-    size_package = 128       #Размер отправляемых пакетов в байтах
+    # size_package = 128       #Размер отправляемых пакетов в байтах
     for count in range(1, ping_count + 1):
-        time_response = ping(host, size=size_package, unit='s')
+        time_response = ping(host, size=packet_size, unit='s')
         # time.sleep(0.1)
         if time_response is not False:
             average = average + time_response
         else:
             lost_count += 1
     sr = average/ping_count
-    return [ping_count, sr]
+    return [ping_count, sr, packet_size]
 
 def about(request):
     return render(request, 'about.html')

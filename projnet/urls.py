@@ -20,7 +20,7 @@ from appnetdiags import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.index, name='index'),
-    path('start/<int:sector_id>/', views.start),
+    path('get_server_list/<int:sector_id>/', views.get_server_list),
     path('about/', views.about, name='about'),
     path('feedback/', views.feedback, name='feedback'),
     # path('message/<int:ping100>/', views.message),

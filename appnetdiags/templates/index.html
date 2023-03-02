@@ -43,11 +43,13 @@
 <center>
 <table>
     <tr align="center">
-        <td><b>Дата</b> </td><td><b>Хост</b></td><td><b>Оправлено пакетов</b></td> <td><b>Среднее время отклика</b></td>
+        <td><b>Дата</b> </td><td><b>Хост</b></td><td><b>Оправлено пакетов</b></td>
+        <b>Размер пакета</b></td> <td><b>Среднее время отклика</b></td>
     </tr>
 {% for rec in items %}
     <tr>
-        <td>{{ rec.log_date }} </td><td>{{ rec.log_host }}</td> </td><td>{{ rec.log_ping_count }}</td> <td>{{ rec.log_average }}</td>
+        <td>{{ rec.log_date }} </td><td>{{ rec.log_host }}</td> </td><td>{{ rec.log_ping_count }}</td>
+        <td>{{ rec.log_ping_size }}</td><td>{{ rec.log_average }}</td>
     </tr>
 {% endfor %}
 </table>
@@ -79,7 +81,7 @@
         var sector_id = this.value;
         var serverSelect = document.getElementById("id_server_name");
         serverSelect.innerHTML = "";
-        fetch("/start/" + sector_id + "/")
+        fetch("/get_server_list/" + sector_id + "/")
             .then(response => response.json())
             .then(data => {
                 data.forEach(function(server) {
