@@ -22,7 +22,7 @@ class Log(models.Model):
     log_host = models.CharField(max_length=40, default='host')
     log_average = models.FloatField(default=0.00)
     log_ping_count = models.IntegerField()
-    log_ping_size = models.IntegerField()
+    log_ping_size = models.IntegerField(default=0)
     log_lost_count = models.IntegerField(default=0.00)
 
     class Meta:
