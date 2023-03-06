@@ -1,10 +1,11 @@
 from django.shortcuts import render
-from django.http import JsonResponse, HttpResponse
+from django.http import JsonResponse, HttpResponse, HttpResponseRedirect
 from .models import Sector, Server, Log
 from .forms import MyForm
 from ping3 import ping, verbose_ping
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
-import appnetdiags.signals
+from matplotlib import pyplot as plt
+# import appnetdiags.signals
 import time
 
 
@@ -100,6 +101,22 @@ def hostping(host, packet_count, packet_size):
     sr = average/ping_count
     return [ping_count, sr, packet_size]
 
+def log_chart(request):
+    servers = Server.objects.all()
+    for server in servers:
+        logs = Log.objects.filter(log_host=server)
+        avg_time = []
+        date_value = []
+        for log in logs:
+            avg_time.append(log.log_average)
+            date_value.append(log.log_date.hour)
+        print(avg_time)
+        plt.plot(date_value, avg_time)
+        plt.xlabel('Дата и время')
+        plt.ylabel('Ср. время отклика')
+        plt.title('Диаграмма доступности веб-серверов')
+    plt.show()
+    return HttpResponseRedirect('/')
 def about(request):
     return render(request, 'about.html')
 

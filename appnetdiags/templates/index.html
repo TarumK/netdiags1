@@ -49,7 +49,7 @@
 {% for rec in items %}
     <tr>
         <td>{{ rec.log_date }} </td><td>{{ rec.log_host }}</td> </td><td>{{ rec.log_ping_count }}</td>
-        <td>{{ rec.log_ping_size }}</td><td>{{ rec.log_average }}</td>
+        <td>{{ rec.log_ping_size }}</td><td>{{ rec.log_average | floatformat:6 }}</td>
     </tr>
 {% endfor %}
 </table>

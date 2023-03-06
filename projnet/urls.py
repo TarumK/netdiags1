@@ -21,6 +21,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.index, name='index'),
     path('get_server_list/<int:sector_id>/', views.get_server_list),
+    path('log_chart/', views.log_chart, name='log_chart'),
     path('about/', views.about, name='about'),
     path('feedback/', views.feedback, name='feedback'),
     # path('message/<int:ping100>/', views.message),
